@@ -4,7 +4,7 @@ from util import *
 class barhandler:
 
     def __init__(self, theme):
-        self._colors = theme.colors
+        self.__colors = theme.colors
         bar_args = self.parse_args(theme)
         self.bar = subprocess.Popen(bar_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         subprocess.Popen(('bash'), stdin=self.bar.stdout)
@@ -30,22 +30,8 @@ class barhandler:
         self._music = ''
         self._volume = ''
         self._network = ''
-        self._divider = colorize('\uF1DD', self._colors['DIVIDER_FG'])
+        self._divider = colorize('\uF1DD', self.__colors['DIVIDER_FG'])
 
-    """
-    "bar": {
-        "height": 40,
-        "underline_height": 3,
-        "dock" : "false",
-        "fonts" : [
-            "Monofur:size=10",
-            "Source Han Sans KR Regular:size=10",
-            "Material Design Icons:size=13"
-        ],
-        "click_areas": 20,
-        "bottom":"false"
-    }
-    """
     def parse_args(self, theme):
         colors = theme.colors
         __height = ""
@@ -113,7 +99,13 @@ class barhandler:
         return bar_args
 
     def refresh(self):
-        output = '%{l}'+self._workspaces+self._divider+self._music+'%{r}'+self._cpu+self._divider+self._volume+self._divider+self._network+self._divider+self._battery+self._divider+self._time+" \n"
+        cpu = getattr(self, '_cpu', '')
+        network = getattr(self, '_network', '')
+        battery = getattr(self, '_battery', '')
+        volume = getattr(self, '_volume', '')
+        time = getattr(self, '_time', '')
+        divider = getattr(self, '_divider', '|')
+        output = '%{l}'+self._workspaces+self._divider+self._music+"%{r}"+cpu+divider+volume+divider+battery+divider+network+divider+time+" \n"
         self.bar.stdin.write(output.encode('utf-8'))
         self.bar.stdin.flush()
 
