@@ -1,0 +1,26 @@
+{
+    "options": {
+        "name": "Flat UI",
+        "creator": "Paatus",
+        "version": 1.0
+    },
+    "colors": {
+        "MAIN_BG": "#2C3E50",
+        "DEFAULT_FG": "#9e9e9e",
+        "HIGHLIGHT_FG": "#2980B9",
+        "ERROR_FG": "#E74C3C",
+        "DIVIDER_FG": "#2980B9"
+    },
+    "bar": {
+        "height": 25,
+        "underline_height": 3,
+        "dock" : "false",
+        "fonts" : [
+            "Monofur:size=10",
+            "Source Han Sans KR Regular:size=8",
+            "Material Design Icons:size=10"
+        ],
+        "click_areas": "20",
+        "bottom": "false"
+    }
+}

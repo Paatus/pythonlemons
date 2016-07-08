@@ -1,36 +1,34 @@
 import subprocess
 from bar import barhandler
 import re
+from util import *
 
 class BspcControl:
     def __init__(self, bar):
         self.bar = bar
         self.bspc = subprocess.Popen(('bspc', 'subscribe', 'report'), stdout=subprocess.PIPE)
         self.monitors = []
-    
-    def inputhandler(self):
+
+    def inputhandler(self, colors):
         with subprocess.Popen(["bspc", "subscribe", "report"], stdout=subprocess.PIPE) as ws:
             for line in ws.stdout:
                 out = ""
                 line = line.decode('utf-8')
                 line2 = handle(line)
-                for part in line2.split(":"):
+                for part in line.split(":"):
                     p = part[:1]
                     if p == "O":
-                        out += underline(colorize(replace_name(part[1:]), "#11bb44"), "#11bb44")
+                        #out += underline(colorize(replace_name(part[1:]), "#11bb44"), "#11bb44")
+                        out += underline(colorize(pad(part[1:], 1), colors['HIGHLIGHT_FG']), colors['HIGHLIGHT_FG'])
                     if p == "o":
-                        out += colorize(part[1:], "#000000")
+                        out += clickable(colorize(pad(part[1:], 1), colors['HIGHLIGHT_FG']), "bspc desktop -f "+part[1:])
                     if p == "f":
-                        out += colorize(replace_name(part[1:]), "#c0c0c0")
+                        #out += clickable(colorize(pad(part[1:], 1), "bspc desktop -f "+part[1:]))
+                        out += clickable(colorize(pad(part[1:], 1), colors['DEFAULT_FG']), "bspc desktop -f "+part[1:])
                     if p == "F":
-                        out += colorize(replace_name(part[1:]), "#11bb44")
+                        #out += underline(colorize(replace_name(part[1:]), "#11bb44"), "#11bb44")
+                        out += underline(colorize(pad(part[1:], 1), colors['HIGHLIGHT_FG']), colors['HIGHLIGHT_FG'])
                 self.bar.workspaces = out
-
-def colorize(string, color):
-    return "%{F"+color+"}"+string+"%{F-}"
-
-def underline(string, color):
-    return "%{U"+color+"}%{+u}"+string+"%{-u}"
 
 def replace_name(string):
     if string[-1:] == "2":

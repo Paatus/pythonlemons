@@ -1,0 +1,26 @@
+{
+    "options": {
+        "name": "Dark Brown",
+        "creator": "Paatus",
+        "version": 1.0
+    },
+    "colors": {
+        "MAIN_BG": "#bb121509",
+        "HIGHLIGHT_FG": "#a2481f",
+        "DEFAULT_FG": "#aaaea0",
+		"ERROR_FG": "#922821",
+        "DIVIDER_FG": "#3c4945"
+    },
+    "bar": {
+        "height": 30,
+        "underline_height": 3,
+        "dock" : "false",
+        "fonts" : [
+            "Monofur:size=10",
+            "Source Han Sans KR Regular:size=8",
+            "Material Design Icons:size=10"
+        ],
+        "click_areas": "20",
+        "bottom": "false"
+    }
+}

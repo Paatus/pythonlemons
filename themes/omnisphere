@@ -1,0 +1,9 @@
+{
+    "colors": {
+        "MAIN_BG": "#bb3e3e3e",
+        "DEFAULT_FG": "#45897c",
+        "HIGHLIGHT_FG":"#adece1",
+        "ERROR_FG": "#ff0000",
+        "DIVIDER_FG": "#acebe0"
+    }
+}
