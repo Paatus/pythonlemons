@@ -52,10 +52,16 @@ def get_wifi(colors):
     try:
         ESSID = subprocess.check_output(("iwgetid", "-r")).decode().strip()
         icon = "\uf5a9"
+        color = colors['DEFAULT_FG']
     except subprocess.CalledProcessError as e:
         icon = "\uf5aa"
         ESSID = "No connection"
-    bar.network = colorize("{} {}".format(icon, ESSID), colors['DEFAULT_FG'])
+        color = colors['ERROR_FG']
+    except FileNotFoundError as e:
+        icon = "\uf5aa"
+        ESSID = "No wifi found"
+        color = colors['ERROR_FG']
+    bar.network = colorize("{} {}".format(icon, ESSID), color)
 
 def get_mpd(colors):
     try:
@@ -82,30 +88,34 @@ def get_time(colors):
     bar.time = colorize(current_time, colors['DEFAULT_FG'])
 
 def get_battery(colors):
-    with open("/sys/class/power_supply/ACAD/online", "r") as f:
-        adapter_online = int(f.readline().strip())
-    with open("/sys/class/power_supply/BAT1/capacity", "r") as f:
-        percent = f.readline().strip()
-    out = ""
-    levels = ["\uf08e","\uf07a", "\uf07b", "\uf07c", "\uf07d", "\uf07e", "\uf07f", "\uf080", "\uf081", "\uf082", "\uf079"]
-    icon = levels[(int(percent)//10)]
-    if adapter_online:
-        global charg_step
-        icon = levels[charg_step]
-        if charg_step < 10:
-            charg_step+=1
+    try:
+        with open("/sys/class/power_supply/ACAD/online", "r") as f:
+            adapter_online = int(f.readline().strip())
+        with open("/sys/class/power_supply/BAT1/capacity", "r") as f:
+            percent = f.readline().strip()
+        out = ""
+        levels = ["\uf08e","\uf07a", "\uf07b", "\uf07c", "\uf07d", "\uf07e", "\uf07f", "\uf080", "\uf081", "\uf082", "\uf079"]
+        icon = levels[(int(percent)//10)]
+        if adapter_online:
+            global charg_step
+            icon = levels[charg_step]
+            if charg_step < 10:
+                charg_step+=1
+            else:
+                charg_step = int(percent)//10
+        if int(percent) < 10:
+            global warning
+            color = colors['ERROR_FG']
+            if warning == 10:
+                subprocess.run(('notify-send','-t','2','-u','critical','Battery Low!\nBattery at {}%'.format(percent)))
+                warning = 0
+            warning += 1
         else:
-            charg_step = int(percent)//10
-    if int(percent) < 10:
-        global warning
+            color = colors['DEFAULT_FG']
+        out += "{} {}%".format(icon, percent)
+    except FileNotFoundError:
+        out = "No battery"
         color = colors['ERROR_FG']
-        if warning == 10:
-            subprocess.run(('notify-send','-t','2','-u','critical','Battery Low!\nBattery at {}%'.format(percent)))
-            warning = 0
-        warning += 1
-    else:
-        color = colors['DEFAULT_FG']
-    out += "{} {}%".format(icon, percent)
     bar.battery = colorize(out, color)
 
 def parse_settings():
